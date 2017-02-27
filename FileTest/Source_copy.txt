@@ -1,0 +1,324 @@
+#include<stdio.h>
+#include<malloc.h>
+#include<string.h>
+#include<stdlib.h>
+#define N 10
+struct student{
+	char num[15];//学号
+	char name[15];//姓名
+	char major[10];//专业（computer,software,network）
+	int classNo;//班级(1-2)
+	int score[3];//3门课的成绩(0-2)
+	struct student *next;//指向下一结点的指针
+};
+
+#define LEN sizeof(student)
+
+/********函数STU *CreateList（）********/
+student* createlist()  //按学号由小到大，建立有序的链表, 返回表头指针。逆序输入 N 个学生信息，
+//号大的先输入，建立带头结点（特殊结点，不放学生信息）的单链表。
+{
+	student *h, *p;
+	int i, j;
+	h = (student*)malloc(LEN);
+	h->next = NULL;
+	for (i = 0; i < N; i++)
+	{
+		p = (student*)malloc(LEN);
+		printf("\n请输入学号，姓名，专业，班级，按Enter键结束:");
+		scanf_s("%s%s%s%d", p->num, p->name, p->major, &p->classNo);
+		getchar();
+		printf("\n请输入三门课的整数成绩，每门成绩以按Enter结束:\n");
+		for (j = 0; j < 3; j++)
+		{
+			scanf_s("%d", &p->score[j]);
+			getchar();
+		}
+		p->next = h->next;
+		h->next = p;
+	}
+	return h;
+}
+/********函数Save ********/
+void save(student *h)  //将某个学生信息存入文件。
+{
+	getchar();
+	student *p = h->next;
+	FILE *fp;
+	char filename[10];
+	printf("请输入需要保存的文件名：");
+	gets_s(filename);
+	if ((fopen_s(&fp,filename, "wb")) == NULL)
+	{
+		printf("cannot open this file\n");
+		return;
+	}
+	while (p != NULL)
+	{
+		if (fwrite(p, sizeof(struct student), 1, fp) != 1)
+			printf("file write error");
+		p = p->next;
+	}
+	fclose(fp);
+}
+/********函数Output ********/
+void output(student *p)  //以指向某个学生结点的指针为参数，将学生信息表格化输出。
+{
+	printf("%s\t%-10s\t%-10s\t%d\t%d\t%d\t%d\n", p->num, p->name, p->major, p->classNo, p->score[0], p->score[1], p->score[2]);
+}
+/********函数Fetch ********/
+void fetch(student *h)  //从文件中读取各个学生的姓名和专业信息，建立链表的时候从文件中读取。
+{
+	student *p = h->next;
+	FILE *fp;
+	char filename[10];
+	printf("请输入需要打开的文件名：");
+	gets_s(filename);
+	if ((fopen_s(&fp,filename, "rb")) == NULL)
+	{
+		printf("cannot open this file\n");
+		return;
+	}
+	while (p != NULL)
+	{
+		fread(p, sizeof(struct student), 1, fp);
+		output(p);
+		p = p->next;
+	}
+	fclose(fp);
+}
+/********函数STU *Search_num(STU * h ，char num[15] ) ********/
+student* search_num(student *h, char s[15])  // 查找指定学号的学生，返回指向该学生结点的指针。
+{
+	student *p;
+	p = h;
+	while (p->next != NULL&&strcmp(p->num, s))
+	{
+		p = p->next;
+	}
+	return p;
+}
+/********函数 void  InsertList(STU * h, STU stu ) ********/
+student* insertlist(student *h, student *s)  // 将某个学生信息插入到链表中的相应位置，并保持此链表按学号的有序性。
+{
+	student *p, *m;
+	p = h->next;
+	m = h;
+	while (p != NULL&&strcmp(p->num, s->num))
+	{
+		m = p;
+		p = p->next;
+	}
+	if (!strcmp(p->num, s->num))
+	{
+		s->next = p;
+		m->next = s;
+		return h;
+	}
+}
+/********函数void  Delete_num(STU * h，char num[15]) ********/
+student* delete_num(student *h, char s[15])  //从链表中删除指定学号的学生。
+{
+	student *p, *a;
+	p = h->next;
+	a = h;
+	while (p->next != NULL&&strcmp(p->num, s))
+	{
+		a = p;
+		p = p->next;
+	}
+	if (!strcmp(p->num, s))
+	{
+		if (p == h)
+			h = p->next;
+		else
+		{
+			a->next = p->next;
+		}
+		free(p);
+	}
+	return h;
+}
+/********函数STU *Search_major _subject_score(STU *h, char major[10], int subject , int grade )********/
+student* search_major_subject_score(student *h, char s[10], int i, int g)  //查找某个专业的、某门课程的成绩小于某个分数的学生，返回指向该学生结点的指针。
+{
+	student *p, *n, *m;
+	int count = 0;
+	p = h;
+	while (p != NULL)
+	{
+		if (!strcmp(p->major, s) && (p->score[i]<g))
+		{
+			count++;
+			if (count>1)
+			{
+				n = (student*)malloc(LEN);
+				n->next = NULL;
+				*n = *m;
+				n->next = p->next;
+				p->next = n;
+			}
+			m = p;
+		}
+		p = p->next;
+	}
+	return n;
+}
+/******** 函数void  Delete_ class _subject_score(STU *h, int classno, int subject, int grade) ********/
+student*  delete_class_subject_score(student *h, int c, int i, int g)  //从链表中删除某个班级的、某门课程的成绩小于某个分数的学生。
+{
+	student *p, *a;
+	a = h;
+	p = h->next;
+	while (p->next != NULL)
+	{
+		if ((p->classNo != c) && (p->score[i] >= g))
+		{
+			a = p;
+			p = p->next;
+		}
+		if ((p->classNo == c) && (p->score[i] < g))
+		{
+			if (p == h)
+				h = p->next;
+			else
+			{
+				a->next = p->next;
+			}
+			free(p);
+		}
+		p = p->next;
+	}
+	return h;
+}
+/********打开文件函数********/
+student* load()  //打开储存了链表的文件。
+{
+	FILE *fp;
+	student *p, *h;
+	h = NULL;
+	int i;
+	char  filename[10];
+	printf("请输入需要打开的文件名:");
+	gets_s(filename);
+	if ((fopen_s(&fp,filename, "rb")) == NULL)
+	{
+		printf("cannot open this file\n");
+		return 0;
+	}
+	for (i = 0; i < N; i++)
+	{
+		p = (student*)malloc(LEN);
+		fread(p, LEN, 1, fp);
+		p->next = h;
+		h = p;
+	}
+	fclose(fp);
+	return h;
+}
+/******** main函数********/
+void  main()  //以菜单形式将各项功能提供给用户，根据用户的选择，调用相应的函数。
+{
+	student *h, *p, *s;
+	char b[15], c[15], d[15];
+	int n, i, m, j;
+	while (1)
+	{
+		printf("请输入功能编号，运行系统相应功能\n");
+		printf("1:创建链表(学号大的先输入);2:文件存盘;3:输出学生信息;4:查找某个学生信息;5:插入学生信息;6:删除指定学号学生信息;7:查找某类学生信息;8:删除某类学生信息;\n");
+		scanf_s("%d", &n);
+		switch (n)
+		{
+		case 1:
+		{
+				  h = createlist();
+				  break;
+		}
+		case 2:
+		{
+				  save(h);
+				  break;
+		}
+		case 3:
+		{
+				  getchar();
+				  fetch(h);
+				  break;
+		}
+		case 4:
+		{
+				  getchar();
+				  h = load();
+				  printf("请输入需要查询的学生学号:");
+				  scanf_s("%s", b);
+				  p = search_num(h, b);
+				  output(p);
+				  break;
+		}
+		case 5:
+		{
+				  getchar();
+				  h = load();
+				  printf("请输入需要插入的学生信息:");
+				  s = (student*)malloc(LEN);
+				  scanf_s("%s%s%s%d%d%d%d", s->num, s->name, s->major, &s->classNo, &s->score[0], &s->score[1], &s->score[2]);
+				  getchar();
+				  h = insertlist(h, s);
+				  while (h != NULL)
+				  {
+					  output(h);
+					  h = h->next;
+				  }
+				  break;
+		}
+		case  6:
+		{
+				   getchar();
+				   h = load();
+				   printf("请输入需要删除的学生学号:");
+				   scanf_s("%s", c);
+				   getchar();
+				   h = delete_num(h, c);
+				   while (h != NULL)
+				   {
+					   output(h);
+					   h = h->next;
+				   }
+				   break;
+		}
+		case  7:
+		{
+				   getchar();
+				   h = load();
+				   printf("请输入需要查询的专业，课程代号(0,1,2)及分数段(<):");
+				   scanf_s("%s%d%d", d, &i, &m);
+				   getchar();
+				   p = search_major_subject_score(h, d, i, m);
+				   while (p != NULL)
+				   {
+					   output(p);
+					   p = p->next;
+				   }
+				   break;
+		}
+		case 8:
+		{
+				  getchar();
+				  h = load();
+				  printf("请输入需要删除的班级，课程代号(0,1,2)及分数段(<):");
+				  scanf_s("%d%d%d", &i, &m, &j);
+				  getchar();
+				  h = delete_class_subject_score(h, i, m, j);
+				  while (h != NULL)
+				  {
+					  output(h);
+					  h = h->next;
+				  }
+				  break;
+		}
+		default:break;
+		}
+		if ((n<1) || (n>8))
+			break;
+	}
+}

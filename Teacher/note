@@ -1,0 +1,24 @@
+通过SessionFactory获取Session的两个方法：
+1、openSession()是获取一个新的Session。
+	
+2、getCurrentSession()获取和当前线程绑定的Session。换言之，在同一个线程中，我们获取的Session是同一个，这样可以利于事务控制。
+	如果使用getCurrentSession()需要在hibernate.cfg.xml配置current_session_context_class为thread
+	
+3、选择原则：
+	(1)、如果需要在同一个线程中，保证使用同一个Session，则使用getCurrentSession()
+	(2)、如果使用不同的Session，则使用openSession()
+
+4、通过getCurrentSession()获取的Session会在事务提交后，自动关闭；而通过openSession()获取的session需要手动关闭。
+
+5、如果是通过getCurrentSession()获取Session，进行查询需要事务提交。	
+
+
+get和load的区别：
+1、get直接返回实体类，如果查不到则返回null，但是不会报错；
+	load会返回一个实体代理对象，如果查询不到就会抛出异常；
+2、使用get查询数据，会立即向数据库发送查询请求(发送sql)；
+	如果使用load查询数据，返回的是一个代理对象，如果未使用查询到的数据，不会向数据库发送sql语句，只有当使用查询到的数据的时候，才会发送sql语句，这个现象称为懒加载或者延迟加载lazy；
+3、通过修改配置文件，可以取消lazy，
+	在xxx.hbm.xml的class标签中添加属性lazy="false"
+4、如果确定数据库中有数据，则使用load，否则使用get	
+		

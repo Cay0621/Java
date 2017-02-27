@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE jdbc [
+	<!ELEMENT jdbc (mysql* ,oracle*)>
+	<!ELEMENT mysql (url,driver,username,password)>
+	<!ELEMENT oracle (url,driver,username,password)>
+	<!ELEMENT url (#PCDATA)>
+	<!ELEMENT driver (#PCDATA)>
+	<!ELEMENT username (#PCDATA)>
+	<!ELEMENT password (#PCDATA)>
+	<!ATTLIST mysql user CDATA #REQUIRED>
+	<!ATTLIST oracle user CDATA #REQUIRED>
+]>
+
+<jdbc>
+	<mysql user="user">
+		<url>jdbc:mysql://127.0.0.1:3306/test</url>
+		<driver>com.jdbc.mysql.Driver</driver>
+		<username>root</username>
+		<password>Cam20150916</password>
+	</mysql>
+	<oracle><!--如果oracle不写user属性，如果setValidation(true)则会报错-->
+		<url>jdbc:oracle:thin@localhost:1521:test</url>
+		<driver>oracle.jdbc.driver.OracleDriver</driver>
+		<username>scott</username>
+		<password>tiger</password>
+	</oracle>
+</jdbc>
+
+
+<!--
+	XPath 用于查询xml中元素的语言
+	w3c指定的标准，并有对应的api来支持该语言进行检索xml
+	
+	/bookshelf/book: 	从根标记下查找所有的book子标记
+	
+	//book：			忽略位置，查找所有的book标记
+		
+	@属性名：			获取指定名称的属性
+						//@ID 获取属性名为ID的属性，同样获取所有的ID属性
+						
+	[index]:			根据索引选取节点
+						/bookshelf/book[1]:获取根标记下第一个book标记
+						注意，索引从1开始
+						
+	/bookshelf/book[@ID='1234']:获取根标记下属性ID值为1234的book标记
+	
+	根据子元素的值获取节点：
+						/bookshelf/book[student='金三顺']
+						获取根标记下book标记的子标记student值为'金三顺'的book标记
+						
+						
+-->

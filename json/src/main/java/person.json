@@ -1,0 +1,15 @@
+{
+	"isSingle":false,
+	"birthday":"1990-01-01",
+	"major":[
+		"C++",
+		"Java",
+		"PHP"
+	],
+	"car":{
+		"color":"白色",
+		"price":3500000,
+		"name":"法拉利"
+	},
+	"name":"老王"
+}

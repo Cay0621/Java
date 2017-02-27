@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/test</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">Cam20150916</property>
+		
+		<property name="show_sql">true</property>
+		<property name="format_sql">true</property>
+		
+		<!-- 配置可以使用getCurrentSession -->
+		<property name="current_session_context_class">thread</property>
+		<!-- 让hibernate自动创建表：create，
+			create：如果没有该表则建立，如果有表则先删除后再创建
+			update：如果没有表，则创建新表，如果有表，则检查表结构是否变化，如果有变化则创建新表，如果没变化则不变化
+		 
+		-->
+		<!-- <property name="hbm2ddl.auto">create</property> -->
+		
+		<mapping resource="org/com/cay/entity/Teacher.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>                                         

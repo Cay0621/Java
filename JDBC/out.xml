@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jdbc><mysql user="user"><url>jdbc:mysql://127.0.0.1:3306/test</url><driver>com.jdbc.mysql.Driver</driver><username>root</username><password>Cam20150916</password></mysql><oracle><url>jdbc:oracle:thin@localhost:1521:test</url><driver>oracle.jdbc.driver.OracleDriver</driver><username>scott</username><password>tiger</password></oracle></jdbc>

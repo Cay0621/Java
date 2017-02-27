@@ -1,0 +1,1 @@
+com.mysql.jdbc.Driver,jdbc:mysql://127.0.0.1:3306/test,root,Cam20150916

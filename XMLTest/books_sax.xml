@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><bookstore>
+<book id="1">
+<name>C++程序设计</name>
+<author>Bjarne Stroustrup</author>
+<price>96.5</price>
+</book>
+<book id="2">
+<name>C语言程序设计</name>
+<author>Dennis M. Ritchie</author>
+<price>88.5</price>
+</book>
+<book id="3">
+<name>Java疯狂讲义</name>
+<author>李刚</author>
+<price>65.0</price>
+</book>
+</bookstore>
